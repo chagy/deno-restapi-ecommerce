@@ -1,4 +1,4 @@
-import { Application, isHttpError } from 'https://deno.land/x/oak@v6.5.0/mod.ts'
+import { Application, isHttpError } from './deps.ts'
 import { productsRouter } from './router/productsRouter.ts'
 import { authRouter } from './router/authRouter.ts'
 import { adminRouter } from './router/adminRouter.ts'

@@ -1,4 +1,4 @@
-import { Router, helpers, } from 'https://deno.land/x/oak@v6.5.0/mod.ts'
+import { Router, helpers, } from '../deps.ts'
 
 export const productsRouter = new Router({ prefix: '/products' })
 
