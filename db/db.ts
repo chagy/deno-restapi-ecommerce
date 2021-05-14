@@ -17,9 +17,9 @@ const pool = new Pool({
     port: +DB_PORT
 }, POOL_CONNECTIONS)
 
-export async function runQuery(query: string) {
+export async function runQuery<T extends {}>(query: string) {
     const client: PoolClient = await pool.connect()
-    const result = await client.queryObject(query)
+    const result = await client.queryObject<T>(query)
     client.release()
 
     return result
