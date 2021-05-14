@@ -1,7 +1,9 @@
-import { Application, isHttpError } from './deps.ts'
+import { Application, isHttpError, config } from './deps.ts'
 import { productsRouter } from './router/productsRouter.ts'
 import { authRouter } from './router/authRouter.ts'
 import { adminRouter } from './router/adminRouter.ts'
+
+const { PORT } = config();
 
 const app = new Application()
 
@@ -63,5 +65,5 @@ app.use(ctx => {
     ctx.response.body = 'Not found'
 })
 
-console.log('The server is staring up at port: 5000')
-await app.listen({ port: 5000 })
+console.log(`The server is staring up at port: ${PORT}`)
+await app.listen({ port: +PORT })
