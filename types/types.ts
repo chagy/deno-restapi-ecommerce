@@ -2,6 +2,7 @@ import "../deps.ts";
 declare module "../deps.ts" {
   interface Request {
     sessionId?: string;
+    user?: User;
   }
 }
 export type ProductCategory = "Clothing" | "Shoes" | "Watches" | "Accessories";

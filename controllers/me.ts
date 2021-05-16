@@ -1,7 +1,8 @@
 import { RouterMiddleware } from "../deps.ts";
 
 export const myProfile: RouterMiddleware = (ctx) => {
-  const { response } = ctx;
+  const { request, response } = ctx;
+  console.log("user: ", request.user);
 
-  response.body = { user: "This is your profile" };
+  response.body = { user: request.user };
 };
