@@ -43,5 +43,19 @@ export const verifyRefreshToken = async (refreshToken: string) => {
     };
     return payload;
   } catch (error) {
+    return null;
+  }
+};
+
+export const verifyAccessToken = async (accessToken: string) => {
+  try {
+    const payload = await verify(accessToken, TK_ACCESS_KEY, "HS256") as {
+      sessionId: string;
+      userId: string;
+      exp: number;
+    };
+    return payload;
+  } catch (error) {
+    return null;
   }
 };
