@@ -5,6 +5,7 @@ import {
   getNumericDate,
   Header,
   Payload,
+  verify,
 } from "../deps.ts";
 
 const { TK_REFRESH_KEY, TK_ACCESS_KEY, TK_NAME } = config();
@@ -33,3 +34,14 @@ export const createAccessToken = (sessionId: string, userId: string) => {
 
 export const setRefreshToken = (token: string, cookies: Cookies) =>
   cookies.set(TK_NAME, token, { httpOnly: true });
+
+export const verifyRefreshToken = async (refreshToken: string) => {
+  try {
+    const payload = await verify(refreshToken, TK_REFRESH_KEY, "HS256") as {
+      sessionId: string;
+      exp: number;
+    };
+    return payload;
+  } catch (error) {
+  }
+};
