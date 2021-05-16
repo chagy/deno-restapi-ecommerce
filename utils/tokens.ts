@@ -59,3 +59,5 @@ export const verifyAccessToken = async (accessToken: string) => {
     return null;
   }
 };
+
+export const deleteToken = (cookies: Cookies) => cookies.delete(TK_NAME);
