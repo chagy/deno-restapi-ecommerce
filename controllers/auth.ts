@@ -5,6 +5,7 @@ import {
   fetchUserByEmail,
   insertSession,
   insertUser,
+  fetchUserByToken, editUserNewPassword
 } from "../db/query.ts";
 import { runQuery } from "../db/db.ts";
 import { User } from "../types/types.ts";
@@ -170,7 +171,7 @@ export const signin: RouterMiddleware = async (ctx) => {
 
 export const resetPassword: RouterMiddleware = async (ctx) => {
   try {
-    const { request, response, cookies } = ctx;
+    const { request, response } = ctx;
 
     const hasBody = request.hasBody;
 
@@ -243,6 +244,76 @@ export const resetPassword: RouterMiddleware = async (ctx) => {
 
     response.body = {
       message: "Please check your email to confirm your reset password",
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const confirmResetPassword: RouterMiddleware = async (ctx) => {
+  try {
+    const { request, response } = ctx;
+
+    const hasBody = request.hasBody;
+
+    if (!hasBody) {
+      ctx.throw(400, "Please all required information");
+    }
+
+    const body = request.body();
+
+    if (body.type !== "json") {
+      ctx.throw(400);
+    }
+
+    const { password, resetPasswordToken } = await body.value as {
+      password: string;
+      resetPasswordToken: string;
+    };
+
+    if (!password || !resetPasswordToken) {
+      ctx.throw(400, "Please provide all required information.");
+    }
+
+    if (password.length < 6) {
+      ctx.throw(400, 'Password must be at least 6 characters')
+    }
+
+    const fetchUserResult = await runQuery<User>(
+      fetchUserByToken(resetPasswordToken),
+    );
+    const user = fetchUserResult.rows[0];
+
+    if (!user) {
+      ctx.throw(400);
+      return
+    }
+
+    const isTokenValid = user.reset_password_token_expiry && user.reset_password_token_expiry > Date.now()
+
+    if (!isTokenValid) {
+      ctx.throw(400)
+      return
+    }
+
+    const isPasswordNotChanged = await bcrypt.compare(password, user.password)
+    if (isPasswordNotChanged) {
+      ctx.throw(400, 'Using the old password is not allowed')
+      return
+    }
+
+    const hashedPassword = await bcrypt.hash(password)
+
+    const updateUserResult = await runQuery<User>(editUserNewPassword({ id: user.id, password: hashedPassword }))
+    const updatedUser = updateUserResult.rows[0]
+
+    if (!updatedUser) {
+      ctx.throw(500)
+      return
+    }
+
+    response.body = {
+      message: "You have successfully reset your password.",
     };
   } catch (error) {
     throw error;
