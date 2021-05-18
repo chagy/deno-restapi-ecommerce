@@ -1,12 +1,21 @@
 import { RouterMiddleware } from "../deps.ts";
 
+import { Role } from '../types/types.ts';
+
 import { verifyAccessToken } from "../utils/tokens.ts";
 
-export const isAuthorized: RouterMiddleware = async (ctx, next) => {
+export const isAuthorized = (permissions: Role[]): RouterMiddleware => async (ctx, next) => {
   const { request } = ctx;
   if (!request.user) {
     ctx.throw(401);
     return;
+  }
+
+  const hasPermission = permissions.includes(request.user.role)
+
+  if (!hasPermission) {
+    ctx.throw(403)
+    return
   }
 
   const authorization = request.headers.get("authorization");

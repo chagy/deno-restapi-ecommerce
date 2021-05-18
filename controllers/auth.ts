@@ -140,6 +140,10 @@ export const signin: RouterMiddleware = async (ctx) => {
       ctx.throw(400, "User not found,please sign up instead.");
     }
 
+    if (user.reset_password_token) {
+      ctx.throw(400, 'Please reset your password')
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {

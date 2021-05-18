@@ -27,7 +27,7 @@ export const createAccessToken = (sessionId: string, userId: string) => {
   const payload: Payload = {
     sessionId,
     userId,
-    exp: getNumericDate(60 * 5),
+    exp: getNumericDate(60 * 60 * 24 * 1),
   };
   return create(header, payload, TK_ACCESS_KEY);
 };
@@ -61,3 +61,10 @@ export const verifyAccessToken = async (accessToken: string) => {
 };
 
 export const deleteToken = (cookies: Cookies) => cookies.delete(TK_NAME);
+
+export const handleTokens = async (sessionId: string, userId: string, cookies: Cookies) => {
+  const refreshToken = await createRefreshToken(sessionId)
+  setRefreshToken(refreshToken, cookies)
+  const accessToken = await createAccessToken(sessionId, userId)
+  return accessToken;
+}
