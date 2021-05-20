@@ -1,4 +1,5 @@
 export { v4 } from "https://deno.land/std@0.92.0/uuid/mod.ts";
+export { createHash } from "https://deno.land/std@0.92.0/hash/mod.ts";
 export {
   Application,
   Cookies,
@@ -10,6 +11,7 @@ export {
 export type {
   Middleware,
   RouterMiddleware,
+  FormDataFile
 } from "https://deno.land/x/oak@v6.5.0/mod.ts";
 export { Pool } from "https://deno.land/x/postgres@v0.8.0/mod.ts";
 export { PoolClient } from "https://deno.land/x/postgres@v0.8.0/client.ts";
