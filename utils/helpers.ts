@@ -85,3 +85,36 @@ export const bufferToBlob = (buffer: ArrayBuffer) => {
   return new Blob([buffer])
 }
 
+export const deleteImage = async (public_id: string) => {
+  try {
+
+    const timestamp = Math.round(Date.now() / 1000)
+    const rawSignature = `public_id=${public_id}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`
+
+    const hasher = createHash('sha1')
+    hasher.update(rawSignature)
+    const signature = hasher.toString()
+
+    const formData = new FormData()
+
+    formData.append('public_id', public_id)
+    formData.append('api_key', CLOUDINARY_API_KEY)
+    formData.append('timestamp', `${timestamp}`)
+    formData.append('signature', signature)
+
+    const response = await fetch(`${CLOUDINARY_BASE_URL}/destroy`, {
+      method: "POST",
+      body: formData
+    })
+
+    if (response.status !== 200) {
+      return null
+    }
+
+    return response.json()
+  }
+  catch (error) {
+
+  }
+}
+
