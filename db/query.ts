@@ -9,8 +9,7 @@ import {
 } from '../types/types.ts'
 
 export const fetchProducts = (limit?: number, skip?: number) =>
-  `SELECT * FROM products ORDER BY created_at DESC LIMIT ${
-    limit ? limit : 'NULL'
+  `SELECT * FROM products ORDER BY created_at DESC LIMIT ${limit ? limit : 'NULL'
   } OFFSET ${skip ? skip : 'NULL'};`
 
 export const countProducts = () => `SELECT COUNT(*) FROM products;`
@@ -60,8 +59,7 @@ export const removeProduct = (productId: string) =>
   `DELETE FROM products WHERE id = '${productId}';`
 
 export const fetchUsers = (limit: number, skip: number) =>
-  `SELECT id, username, email, role, stripe_id, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ${
-    limit ? limit : 'NULL'
+  `SELECT id, username, email, role, stripe_id, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT ${limit ? limit : 'NULL'
   } OFFSET ${skip ? skip : 'NULL'};`
 
 export const countUsers = () => `SELECT COUNT(*) FROM users;`
@@ -126,16 +124,26 @@ export const removeUser = (userId: string) =>
 export const fetchCartByUserId = (userId: string) =>
   `SELECT
     c.id, c.payment_intent, c.owner_id, c.created_at, c.updated_at,
-    CASE WHEN a.id IS NULL THEN NULL ELSE json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) END as shipping_address,
-    array_remove(array_agg(jsonb_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'owner_id', ct.owner_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'image_file_name', p.image_file_name,'image_public_id', p.image_public_id, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC),
-    to_jsonb('{"id":null, "quantity":null, "product_id":null, "owner_id":null, "created_at":null, "updated_at":null, "title":null, "description":null, "price":null, "image_url":null, "image_file_name":null, "image_public_id":null, "category":null, "inventory":null}'::json)
-    ) as items
-    FROM carts c
-    LEFT JOIN addresses a ON (a.id = c.address_id)
-    LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
-    LEFT JOIN products p ON (p.id = ct.product_id)
-    WHERE c.owner_id = '${userId}'
-    GROUP BY c.id, a.id;`
+    json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) as shipping_address,
+    json_agg(json_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC) as items
+  FROM carts c
+  LEFT JOIN addresses a ON (a.id = c.address_id)
+  LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
+  LEFT JOIN products p ON (p.id = ct.product_id)
+  WHERE c.owner_id = '${userId}'
+  GROUP BY c.id, a.id;`
+// `SELECT
+//   c.id, c.payment_intent, c.owner_id, c.created_at, c.updated_at,
+//   CASE WHEN a.id IS NULL THEN NULL ELSE json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) END as shipping_address,
+//   array_remove(array_agg(jsonb_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'owner_id', ct.owner_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'image_file_name', p.image_file_name,'image_public_id', p.image_public_id, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC),
+//   to_jsonb('{"id":null, "quantity":null, "product_id":null, "owner_id":null, "created_at":null, "updated_at":null, "title":null, "description":null, "price":null, "image_url":null, "image_file_name":null, "image_public_id":null, "category":null, "inventory":null}'::json)
+//   ) as items
+//   FROM carts c
+//   LEFT JOIN addresses a ON (a.id = c.address_id)
+//   LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
+//   LEFT JOIN products p ON (p.id = ct.product_id)
+//   WHERE c.owner_id = '${userId}'
+//   GROUP BY c.id, a.id;`
 
 export const fetchCartById = (cartId: string) =>
   `SELECT * FROM carts WHERE id = '${cartId}';`
@@ -178,8 +186,7 @@ export const insertShippingAddress = ({
   phone,
   owner_id,
 }: Omit<Address, 'id' | 'created_at' | 'updated_at'>) =>
-  `INSERT INTO addresses(fullname, address1, address2, city, zip_code, phone, owner_id) VALUES('${fullname}', '${address1}', '${
-    address2 ? address2 : ''
+  `INSERT INTO addresses(fullname, address1, address2, city, zip_code, phone, owner_id) VALUES('${fullname}', '${address1}', '${address2 ? address2 : ''
   }', '${city}', '${zip_code}', '${phone}', '${owner_id}') RETURNING *;`
 
 export const editShippingAddress = (
@@ -193,8 +200,7 @@ export const editShippingAddress = (
     phone,
   }: Omit<Address, 'id' | 'owner_id' | 'created_at' | 'updated_at'>
 ) =>
-  `UPDATE addresses SET fullname = '${fullname}', address1 = '${address1}', address2 = '${
-    address2 ? address2 : ''
+  `UPDATE addresses SET fullname = '${fullname}', address1 = '${address1}', address2 = '${address2 ? address2 : ''
   }', city = '${city}', zip_code = '${zip_code}', phone = '${phone}' WHERE id = '${addressId}' RETURNING *;`
 
 export const removeShippingAddress = (addressId: string) =>
