@@ -2,7 +2,7 @@ import { Application, config, isHttpError } from "./deps.ts";
 import { productsRouter } from "./router/productsRouter.ts";
 import { authRouter } from "./router/authRouter.ts";
 import { meRouter } from "./router/meRouter.ts";
-import { cartsRouter } from "./router/cartRouter.ts";
+import { cartRouter } from "./router/cartRouter.ts";
 import { adminRouter } from "./router/adminRouter.ts";
 import { getRefreshToken } from "./middlewares/getRefreshtoken.ts";
 
@@ -65,8 +65,8 @@ app.use(meRouter.routes());
 app.use(meRouter.allowedMethods());
 
 //Carts routes(private)
-app.use(cartsRouter.routes());
-app.use(cartsRouter.allowedMethods());
+app.use(cartRouter.routes());
+app.use(cartRouter.allowedMethods());
 
 //Route users
 app.use(adminRouter.routes());
