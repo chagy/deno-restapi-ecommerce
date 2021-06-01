@@ -3,6 +3,7 @@ import { productsRouter } from "./router/productsRouter.ts";
 import { authRouter } from "./router/authRouter.ts";
 import { meRouter } from "./router/meRouter.ts";
 import { cartRouter } from "./router/cartRouter.ts";
+import { addressesRouter } from "./router/addressesRouter.ts";
 import { adminRouter } from "./router/adminRouter.ts";
 import { getRefreshToken } from "./middlewares/getRefreshtoken.ts";
 
@@ -67,6 +68,10 @@ app.use(meRouter.allowedMethods());
 //Carts routes(private)
 app.use(cartRouter.routes());
 app.use(cartRouter.allowedMethods());
+
+//Addresses routes(private)
+app.use(addressesRouter.routes());
+app.use(addressesRouter.allowedMethods());
 
 //Route users
 app.use(adminRouter.routes());
