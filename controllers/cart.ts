@@ -195,3 +195,36 @@ export const updateCart: RouterMiddleware = async (ctx) => {
         throw error
     }
 }
+
+export const deleteCartItem: RouterMiddleware = async (ctx) => {
+    try {
+        const { request, response, params } = ctx;
+        const { cartItemId } = params as { cartItemId: string }
+
+        if (!request.user) {
+            ctx.throw(401)
+            return
+        }
+
+        const fetchCartResult = await runQuery<CartDetail>(fetchCartByUserId(request.user.id))
+        const cartDetail = fetchCartResult.rows[0]
+
+        if (!cartDetail) {
+            ctx.throw(400)
+            return
+        }
+
+        const cartItemDetail = cartDetail.items.find(item => item.id === cartItemId)
+
+        if (!cartItemDetail) {
+            ctx.throw(400)
+            return
+        }
+
+        await runQuery(removeCartItem(cartItemId));
+
+        response.body = { message: `The product: ${cartItemDetail.title} has been removed from your cart` }
+    } catch (error) {
+        throw error
+    }
+}

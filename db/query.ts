@@ -122,28 +122,28 @@ export const removeUser = (userId: string) =>
 //     GROUP BY c.id, a.id;`
 
 export const fetchCartByUserId = (userId: string) =>
+  // `SELECT
+  //   c.id, c.payment_intent, c.owner_id, c.created_at, c.updated_at,
+  //   json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) as shipping_address,
+  //   json_agg(json_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC) as items
+  // FROM carts c
+  // LEFT JOIN addresses a ON (a.id = c.address_id)
+  // LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
+  // LEFT JOIN products p ON (p.id = ct.product_id)
+  // WHERE c.owner_id = '${userId}'
+  // GROUP BY c.id, a.id;`
   `SELECT
     c.id, c.payment_intent, c.owner_id, c.created_at, c.updated_at,
-    json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) as shipping_address,
-    json_agg(json_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC) as items
-  FROM carts c
-  LEFT JOIN addresses a ON (a.id = c.address_id)
-  LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
-  LEFT JOIN products p ON (p.id = ct.product_id)
-  WHERE c.owner_id = '${userId}'
-  GROUP BY c.id, a.id;`
-// `SELECT
-//   c.id, c.payment_intent, c.owner_id, c.created_at, c.updated_at,
-//   CASE WHEN a.id IS NULL THEN NULL ELSE json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) END as shipping_address,
-//   array_remove(array_agg(jsonb_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'owner_id', ct.owner_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'image_file_name', p.image_file_name,'image_public_id', p.image_public_id, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC),
-//   to_jsonb('{"id":null, "quantity":null, "product_id":null, "owner_id":null, "created_at":null, "updated_at":null, "title":null, "description":null, "price":null, "image_url":null, "image_file_name":null, "image_public_id":null, "category":null, "inventory":null}'::json)
-//   ) as items
-//   FROM carts c
-//   LEFT JOIN addresses a ON (a.id = c.address_id)
-//   LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
-//   LEFT JOIN products p ON (p.id = ct.product_id)
-//   WHERE c.owner_id = '${userId}'
-//   GROUP BY c.id, a.id;`
+    CASE WHEN a.id IS NULL THEN NULL ELSE json_build_object('id', a.id, 'fullname', a.fullname, 'address1', a.address1, 'address2', a.address2, 'city', a.city, 'zip_code', a.zip_code, 'phone', a.phone) END as shipping_address,
+    array_remove(array_agg(jsonb_build_object('id', ct.id, 'quantity', ct.quantity, 'product_id', ct.product_id, 'owner_id', ct.owner_id, 'created_at', ct.created_at, 'updated_at', ct.updated_at, 'title', p.title, 'description', p.description, 'price', p.price, 'image_url', p.image_url, 'image_file_name', p.image_file_name,'image_public_id', p.image_public_id, 'category', p.category, 'inventory', p.inventory) ORDER BY ct.created_at DESC),
+    to_jsonb('{"id":null, "quantity":null, "product_id":null, "owner_id":null, "created_at":null, "updated_at":null, "title":null, "description":null, "price":null, "image_url":null, "image_file_name":null, "image_public_id":null, "category":null, "inventory":null}'::json)
+    ) as items
+    FROM carts c
+    LEFT JOIN addresses a ON (a.id = c.address_id)
+    LEFT JOIN cart_items ct ON (ct.cart_id = c.id)
+    LEFT JOIN products p ON (p.id = ct.product_id)
+    WHERE c.owner_id = '${userId}'
+    GROUP BY c.id, a.id;`
 
 export const fetchCartById = (cartId: string) =>
   `SELECT * FROM carts WHERE id = '${cartId}';`
