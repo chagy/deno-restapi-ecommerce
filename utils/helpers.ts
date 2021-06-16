@@ -1,5 +1,7 @@
 import { config, FormDataFile, createHash } from "../deps.ts";
 
+import { CartItemDetail } from '../types/types.ts'
+
 const { SENDGRID_API_KEY, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_BASE_URL } = config();
 export const validateEmail = (email: string) => {
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -118,3 +120,5 @@ export const deleteImage = async (public_id: string) => {
   }
 }
 
+export const calculateCartAmount = (cartItems: CartItemDetail[]) => cartItems.reduce((total, item) => (item.quantity * item.price) + total, 0);
+export const calculateCartQuantity = (cartItems: CartItemDetail[]) => cartItems.reduce((total, item) => item.quantity + total, 0);

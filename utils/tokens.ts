@@ -27,9 +27,9 @@ export const createAccessToken = (sessionId: string, userId: string) => {
   const payload: Payload = {
     sessionId,
     userId,
-    exp: getNumericDate(60 * 60 * 24 * 1),
+    exp: getNumericDate(60 * 5),
   };
-  return create(header, payload, TK_ACCESS_KEY);
+  return create(header, payload, TK_ACCESS_KEY); ``
 };
 
 export const setRefreshToken = (token: string, cookies: Cookies) =>

@@ -98,7 +98,7 @@ export const signup: RouterMiddleware = async (ctx) => {
 
     const accessToken = await createAccessToken(session.id, newUser.id);
 
-    response.body = { message: "You have successfully signed up", accessToken };
+    response.body = { message: "You have successfully signed up", accessToken, user: newUser };
   } catch (error) {
     throw error;
   }
